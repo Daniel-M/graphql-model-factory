@@ -12,12 +12,13 @@ const {
 } = require('../utils')
 
 const {{ .Name }}Schema = new Schema({ {{ if .Spec }}{{ range $key, $value := .Spec }}
-  {{ $key }}: {
-    type: {{ .type }},{{ if .required }}
+  {{ $key }}: {{ if .array }}[{{end}}{ {{ if not .ref }}
+    type: {{ .type }},{{ else }}
+    type: Schema.Types.ObjectId,{{ end }}{{ if .required }}
     required: {{ .required }},{{ end }}{{ if .ref }}
-    ref: "{{ .ref }}",{{ end }} {{ if .default }}
+    ref: '{{ .ref }}',{{ end }} {{ if .default }}
     default: {{ .default }}, {{ end }}
-  },{{ end }}{{ end }}
+  }{{ if .array }}]{{end}},{{ end }}{{ end }}
 })
 
 {{ .Name }}Schema.add(BaseSchema)
@@ -54,7 +55,7 @@ const {{ .Name }} = mongoose.model('{{ .Name }}', {{ .Name }}Schema)
   next()
 })
 
-{{ .Name }}Schema.addOne = async function ({
+{{ .Name }}Schema.statics.addOne = async function ({
   {{ .LowerName }},
   user,
 }) {
