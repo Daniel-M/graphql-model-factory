@@ -3,7 +3,9 @@ Type {{ .Name }} that defines a {{ .LowerName }}
 """
 type {{ .Name }} {
   id: ID!
-  uuid: ID!{{ if .Spec }}{{ range $key, $value := .Spec }}{{if not .ref}}
+  uuid: ID!
+  name: String!
+  description: String!{{ if .Spec }}{{ range $key, $value := .Spec }}{{if not .ref}}
   {{ $key }}: {{ if .array }}[{{end}}{{ .type }}{{ if .required }}!{{end}}{{ if .array }}]{{end}}{{else}}
   {{ $key }}: {{ if .array }}[{{end}}{{ .ref }}{{ if .required }}!{{end}}{{ if .array }}]{{end}}{{end}}{{end}}{{end}}
   organization: Organization! 
