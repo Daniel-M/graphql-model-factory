@@ -42,7 +42,8 @@ const {{ .Name }} = mongoose.model('{{ .Name }}', {{ .Name }}Schema)
     .populate('createdBy')
     .populate('updatedBy')
     .populate('createdBy.organization')
-    .populate('updatedBy.organization')
+    .populate('updatedBy.organization'){{ if .Spec }}{{ range $key, $value := .Spec }}{{ if .ref }}
+    .populate('{{ $key }}'){{ end }}{{ end }}{{ end }}
 })
 
 {{ .Name }}Schema.pre(/^find/, function(next) {
@@ -50,7 +51,8 @@ const {{ .Name }} = mongoose.model('{{ .Name }}', {{ .Name }}Schema)
     .populate('createdBy')
     .populate('updatedBy')
     .populate('createdBy.organization')
-    .populate('updatedBy.organization')
+    .populate('updatedBy.organization'){{ if .Spec }}{{ range $key, $value := .Spec }}{{ if .ref }}
+    .populate('{{ $key }}'){{ end }}{{ end }}{{ end }}
     .sort('-updatedAt')
   next()
 })

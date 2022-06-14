@@ -4,13 +4,13 @@ Type {{ .Name }} that defines a {{ .LowerName }}
 type {{ .Name }} {
   id: ID!
   uuid: ID!{{ if .Spec }}{{ range $key, $value := .Spec }}{{if not .ref}}
-  {{ $key }}: {{ .type }}{{else}}
-  {{ $key }}: {{ .ref }}{{end}}{{ if .required }}!{{end}}{{ end }}{{ end }}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .type }}{{ if .required }}!{{end}}{{ if .array }}]{{end}}{{else}}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .ref }}{{ if .required }}!{{end}}{{ if .array }}]{{end}}{{end}}{{end}}{{end}}
   organization: Organization! 
   createdBy: User! 
   updatedBy: User 
   createdAt: String!
-  updatedAt: String!
+  updatedAt: String
 }
 
 """
@@ -18,16 +18,21 @@ Input data to update {{ .LowerName }}
 """
 input {{ .Name }}UpdateInput {
   id: ID
-  uuid: ID{{ if .Spec }}{{ range $key, $value := .Spec }}{{ if .modifiable }}
-  {{ $key }}: {{ .type }}{{end}}{{ end }}{{ end }}
+  uuid: ID
+  name: String
+  description: String{{ if .Spec }}{{ range $key, $value := .Spec }}{{if .modifiable}}{{if not .ref}}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .type }}{{else}}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .ref }}UpdateInput{{end}}{{ if .array }}]{{end}}{{end}}{{end}}{{end}}
 }
 
 """
 Input data to create {{ .LowerName }} 
 """
-input {{ .Name }}Input { {{ if .Spec }}{{ range $key, $value := .Spec }}{{if not .ref}}
-  {{ $key }}: {{ .type }}{{else}}
-  {{ $key }}: {{ .ref }}{{end}}{{ if .required }}!{{end}}{{ end }}{{ end }}
+input {{ .Name }}Input { 
+  name: String!
+  description: String!{{ if .Spec }}{{ range $key, $value := .Spec }}{{if not .ref}}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .type }}{{else}}
+  {{ $key }}: {{ if .array }}[{{end}}{{ .ref }}Input{{end}}{{ if .required }}!{{end}}{{ if .array }}]{{end}}{{end}}{{end}}
 }
 
 
