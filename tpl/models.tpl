@@ -32,12 +32,17 @@ const {{ .Name }} = mongoose.model('{{ .Name }}', {{ .Name }}Schema)
 
   // Create associated stuff when the document is new 
   if (this.isNew) {
+    this.wasNew = this.isNew
   }
 
   next()
 })
 
 {{ .Name }}Schema.post('save', async function(doc) {
+
+  if (this.wasNew) {
+  }
+
   return await doc.populate('organization')
     .populate('createdBy')
     .populate('updatedBy')
